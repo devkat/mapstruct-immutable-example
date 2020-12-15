@@ -1,72 +1,76 @@
 package com.github.devkat.persistence;
 
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-
-import com.github.devkat.model.Book;
-import com.github.devkat.model.ImmutableBook;
+import com.github.devkat.model.Character;
+import com.github.devkat.model.*;
 import com.github.devkat.persistence.dto.BookDto;
+import com.github.devkat.persistence.dto.BookToCharacterDto;
+import com.github.devkat.persistence.dto.CharacterDto;
 import com.github.devkat.persistence.mapping.Mappers;
-import fj.function.Effect0;
-import org.jinq.jpa.JPAQueryLogger;
-import org.jinq.jpa.JinqJPAStreamProvider;
+import fj.data.List;
+import fj.function.Effect1;
 import org.jinq.orm.stream.JinqStream;
+import org.jinq.tuples.Pair;
 import org.junit.jupiter.api.Test;
 
-import static javax.persistence.Persistence.createEntityManagerFactory;
-import static org.eclipse.persistence.config.PersistenceUnitProperties.TRANSACTION_TYPE;
+import static com.github.devkat.model.Species.HUMAN;
+import static fj.data.Option.none;
+import static fj.data.Option.some;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PersistenceTest {
-
-    private final JinqJPAStreamProvider streams;
-    private final EntityManager entityManager;
-
-    public PersistenceTest() {
-        final Map<String, String> properties = new HashMap<>();
-
-        properties.put(TRANSACTION_TYPE, PersistenceUnitTransactionType.RESOURCE_LOCAL.name());
-
-        final EntityManagerFactory entityManagerFactory =
-                createEntityManagerFactory("JPATest", properties);
-        streams = new JinqJPAStreamProvider(entityManagerFactory);
-        streams.setHint("queryLogger", (JPAQueryLogger) (query, positionParameters, namedParameters) ->
-                System.out.println("  " + query));
-        entityManager = entityManagerFactory.createEntityManager();
-    }
+public class PersistenceTest extends AbstractPersistenceTest {
 
     private JinqStream<BookDto> books() {
         return streams.streamAll(entityManager, BookDto.class);
-    }
-
-    private void transactional(final Effect0 f) {
-        EntityTransaction tx = null;
-        try {
-            tx = entityManager.getTransaction();
-            tx.begin();
-            f.f();
-            tx.commit();
-        } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) tx.rollback();
-            throw e; // or display error message
-        } finally {
-            entityManager.close();
-        }
     }
 
     @Test
     public void testPersistence() {
         transactional(() -> {
 
-            final Book book = ImmutableBook.builder()
-                    .title("Night Watch")
-                    .build();
+            final WithId<BookId, Book> book = persist(Mappers.BookMapper.instance,
+                    ImmutableBook.builder()
+                            .title("Night Watch")
+                            .build());
 
-            entityManager.persist(Mappers.BookMapper.instance.toDto(book));
+            final Effect1<Character> persistCharacter = (ch) -> {
+
+                final WithId<CharacterId, Character> chRead = persist(Mappers.CharacterMapper.instance, ch);
+
+                entityManager.persist(Mappers.BookToCharacterMapper.instance.toDto(ImmutableBookToCharacter.builder()
+                        .bookId(book.getId())
+                        .characterId(chRead.getId())
+                        .build()));
+
+            };
+
+            persistCharacter.f(ImmutableCharacter.builder()
+                    .name("Samuel Vimes")
+                    .species(some(HUMAN))
+                    .build());
+
+            persistCharacter.f(ImmutableCharacter.builder()
+                    .name("Nobby Nobbs")
+                    .species(none())
+                    .build());
+
+            final List<Pair<Pair<BookDto, BookToCharacterDto>, CharacterDto>> bookRead = List.iterableList(books()
+                            .leftOuterJoin(
+                                    (b, source) -> source.stream(BookToCharacterDto.class),
+                                    (b, r) -> b.getId() == r.getBookId()
+                            )
+                            .leftOuterJoin(
+                                    (p, source) -> source.stream(CharacterDto.class),
+                                    (p, c) -> p.getTwo().getCharacterId() == c.getId()
+                            )
+                            .toList());
+
+            assertTrue(bookRead.isNotEmpty());
+
+            bookRead.forEach(pair -> {
+                final WithId<CharacterId, Character> ch = pair.getTwo().toEntity();
+                assertNotNull(ch);
+                System.out.printf("%s (%s)%n", ch.getData().getName(), ch.getData().getSpecies());
+            });
 
         });
     }

@@ -1,5 +1,6 @@
 package com.github.devkat.model;
 
+import fj.data.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,9 +17,11 @@ import org.immutables.value.Generated;
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 public final class ImmutableCharacter implements Character {
   private final String name;
+  private final Option<Species> species;
 
-  private ImmutableCharacter(String name) {
+  private ImmutableCharacter(String name, Option<Species> species) {
     this.name = name;
+    this.species = species;
   }
 
   /**
@@ -30,6 +33,14 @@ public final class ImmutableCharacter implements Character {
   }
 
   /**
+   * @return The value of the {@code species} attribute
+   */
+  @Override
+  public Option<Species> getSpecies() {
+    return species;
+  }
+
+  /**
    * Copy the current immutable object by setting a value for the {@link Character#getName() name} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for name
@@ -38,7 +49,19 @@ public final class ImmutableCharacter implements Character {
   public final ImmutableCharacter withName(String value) {
     String newValue = Objects.requireNonNull(value, "name");
     if (this.name.equals(newValue)) return this;
-    return new ImmutableCharacter(newValue);
+    return new ImmutableCharacter(newValue, this.species);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link Character#getSpecies() species} attribute.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for species
+   * @return A modified copy of the {@code this} object
+   */
+  public final ImmutableCharacter withSpecies(Option<Species> value) {
+    if (this.species == value) return this;
+    Option<Species> newValue = Objects.requireNonNull(value, "species");
+    return new ImmutableCharacter(this.name, newValue);
   }
 
   /**
@@ -53,17 +76,19 @@ public final class ImmutableCharacter implements Character {
   }
 
   private boolean equalTo(ImmutableCharacter another) {
-    return name.equals(another.name);
+    return name.equals(another.name)
+        && species.equals(another.species);
   }
 
   /**
-   * Computes a hash code from attributes: {@code name}.
+   * Computes a hash code from attributes: {@code name}, {@code species}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + name.hashCode();
+    h += (h << 5) + species.hashCode();
     return h;
   }
 
@@ -75,6 +100,7 @@ public final class ImmutableCharacter implements Character {
   public String toString() {
     return "Character{"
         + "name=" + name
+        + ", species=" + species
         + "}";
   }
 
@@ -99,6 +125,7 @@ public final class ImmutableCharacter implements Character {
    * <pre>
    * ImmutableCharacter.builder()
    *    .name(String) // required {@link Character#getName() name}
+   *    .species(fj.data.Option&amp;lt;com.github.devkat.model.Species&amp;gt;) // required {@link Character#getSpecies() species}
    *    .build();
    * </pre>
    * @return A new ImmutableCharacter builder
@@ -117,9 +144,11 @@ public final class ImmutableCharacter implements Character {
   @Generated(from = "Character", generator = "Immutables")
   public static final class Builder {
     private static final long INIT_BIT_NAME = 0x1L;
-    private long initBits = 0x1L;
+    private static final long INIT_BIT_SPECIES = 0x2L;
+    private long initBits = 0x3L;
 
     private String name;
+    private Option<Species> species;
 
     private Builder() {
     }
@@ -134,6 +163,7 @@ public final class ImmutableCharacter implements Character {
     public final Builder from(Character instance) {
       Objects.requireNonNull(instance, "instance");
       name(instance.getName());
+      species(instance.getSpecies());
       return this;
     }
 
@@ -149,6 +179,17 @@ public final class ImmutableCharacter implements Character {
     }
 
     /**
+     * Initializes the value for the {@link Character#getSpecies() species} attribute.
+     * @param species The value for species 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    public final Builder species(Option<Species> species) {
+      this.species = Objects.requireNonNull(species, "species");
+      initBits &= ~INIT_BIT_SPECIES;
+      return this;
+    }
+
+    /**
      * Builds a new {@link ImmutableCharacter ImmutableCharacter}.
      * @return An immutable instance of Character
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -157,12 +198,13 @@ public final class ImmutableCharacter implements Character {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new ImmutableCharacter(name);
+      return new ImmutableCharacter(name, species);
     }
 
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_NAME) != 0) attributes.add("name");
+      if ((initBits & INIT_BIT_SPECIES) != 0) attributes.add("species");
       return "Cannot build Character, some of required attributes are not set " + attributes;
     }
   }
