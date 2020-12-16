@@ -41,10 +41,9 @@ public class PersistenceTest extends AbstractPersistenceTest {
 
                 final WithId<CharacterId, Character> chRead = persist(Mappers.CharacterMapper.instance, ch);
 
-                entityManager.persist(Mappers.BookToCharacterMapper.instance.toDto(ImmutableBookToCharacter.builder()
-                        .bookId(book.getId())
-                        .characterId(chRead.getId())
-                        .build()));
+                entityManager.persist(Mappers.BookToCharacterMapper.instance.toDto(
+                        ImmutableBookToCharacter.of(book.getId(), chRead.getId())
+                ));
 
             };
 

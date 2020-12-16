@@ -2,7 +2,7 @@ package com.github.devkat.domain;
 
 import org.immutables.value.Value;
 
-@Value.Immutable
+@Value.Immutable @Tuple
 public interface BookToCharacter {
 
     BookId getBookId();
