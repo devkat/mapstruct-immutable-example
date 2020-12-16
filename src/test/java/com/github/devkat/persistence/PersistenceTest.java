@@ -2,59 +2,47 @@ package com.github.devkat.persistence;
 
 import com.github.devkat.domain.Character;
 import com.github.devkat.domain.*;
-import com.github.devkat.persistence.dto.BookDto;
-import com.github.devkat.persistence.dto.BookToCharacterDto;
-import com.github.devkat.persistence.dto.CharacterDto;
-import com.github.devkat.persistence.mapping.Mappers;
 import com.github.devkat.service.BookService;
-import fj.F0;
 import fj.P2;
 import fj.Unit;
 import fj.data.List;
+import fj.data.Stream;
 import fj.function.Effect1;
-import org.jinq.orm.stream.JinqStream;
-import org.jinq.tuples.Pair;
 import org.junit.jupiter.api.Test;
 
 import static com.github.devkat.domain.Species.HUMAN;
 import static fj.F2Functions.tuple;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PersistenceTest extends AbstractPersistenceTest {
 
     private final BookService bookService;
 
     {
-        bookService = new BookService(entityManagerFactory);
+        bookService = new BookService(entityManager);
     }
 
     @Test
     public void testPersistence() {
         transactional(() -> {
 
-            final WithId<BookId, Book> book = persist(Mappers.BookMapper.instance,
-                    ImmutableBook.of("Night Watch"));
+            final WithId<BookId, Book> book = bookService.createBook(ImmutableBook.of("Night Watch"));
 
-            final Effect1<Character> persistCharacter = (ch) -> {
-
-                final WithId<CharacterId, Character> chRead = persist(Mappers.CharacterMapper.instance, ch);
-
-                entityManager.persist(Mappers.BookToCharacterMapper.instance.toDto(
-                        ImmutableBookToCharacter.of(book.getId(), chRead.getId())
-                ));
-
+            final Effect1<Character> addCharacter = (ch) -> {
+                final WithId<CharacterId, Character> chRead = bookService.createCharacter(ch);
+                bookService.addCharacterToBook(book.getId(), chRead.getId());
             };
 
             final Character vimes = ImmutableCharacter.of("Samuel Vimes", some(HUMAN));
             final Character nobby = ImmutableCharacter.copyOf(vimes).withName("Nobby Nobbs").withSpecies(none());
 
-            persistCharacter.f(vimes);
-            persistCharacter.f(nobby);
+            addCharacter.f(vimes);
+            addCharacter.f(nobby);
 
-            final List<P2<WithId<BookId, Book>, WithId<CharacterId, Character>>> booksWithCharacters =
-                    bookService.getBooksWithCharacters(entityManager);
+            final Stream<P2<WithId<BookId, Book>, WithId<CharacterId, Character>>> booksWithCharacters =
+                    bookService.getBooksWithCharacters();
 
             assertTrue(booksWithCharacters.isNotEmpty());
 

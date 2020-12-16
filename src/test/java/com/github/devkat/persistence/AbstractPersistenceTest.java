@@ -18,12 +18,12 @@ import static org.eclipse.persistence.config.PersistenceUnitProperties.TRANSACTI
 public abstract class AbstractPersistenceTest {
 
     protected final EntityManager entityManager;
-    protected final EntityManagerFactory entityManagerFactory;
 
     {
         final Map<String, String> properties = new HashMap<>();
         properties.put(TRANSACTION_TYPE, PersistenceUnitTransactionType.RESOURCE_LOCAL.name());
-        entityManagerFactory = createEntityManagerFactory("JPATest", properties);
+        final EntityManagerFactory entityManagerFactory =
+                createEntityManagerFactory("JPATest", properties);
         entityManager = entityManagerFactory.createEntityManager();
     }
 
@@ -42,10 +42,4 @@ public abstract class AbstractPersistenceTest {
         }
     }
 
-    protected <ID, A, D extends WithIdDto<ID, A>> WithId<ID, A> persist(final DtoMapper<A, D> mapper, final A entity) {
-        final D dto = mapper.toDto(entity);
-        entityManager.persist(dto);
-        entityManager.flush();
-        return dto.toEntity();
-    }
 }
