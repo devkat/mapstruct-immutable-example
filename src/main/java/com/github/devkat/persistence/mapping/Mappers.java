@@ -1,8 +1,8 @@
 package com.github.devkat.persistence.mapping;
 
-import com.github.devkat.model.Book;
-import com.github.devkat.model.BookToCharacter;
-import com.github.devkat.model.Character;
+import com.github.devkat.domain.Book;
+import com.github.devkat.domain.BookToCharacter;
+import com.github.devkat.domain.Character;
 import com.github.devkat.persistence.dto.BookDto;
 import com.github.devkat.persistence.dto.BookToCharacterDto;
 import com.github.devkat.persistence.dto.CharacterDto;

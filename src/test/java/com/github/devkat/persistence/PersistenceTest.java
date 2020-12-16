@@ -1,7 +1,7 @@
 package com.github.devkat.persistence;
 
-import com.github.devkat.model.Character;
-import com.github.devkat.model.*;
+import com.github.devkat.domain.Character;
+import com.github.devkat.domain.*;
 import com.github.devkat.persistence.dto.BookDto;
 import com.github.devkat.persistence.dto.BookToCharacterDto;
 import com.github.devkat.persistence.dto.CharacterDto;
@@ -12,7 +12,7 @@ import org.jinq.orm.stream.JinqStream;
 import org.jinq.tuples.Pair;
 import org.junit.jupiter.api.Test;
 
-import static com.github.devkat.model.Species.HUMAN;
+import static com.github.devkat.domain.Species.HUMAN;
 import static fj.data.Option.none;
 import static fj.data.Option.some;
 import static org.junit.jupiter.api.Assertions.*;

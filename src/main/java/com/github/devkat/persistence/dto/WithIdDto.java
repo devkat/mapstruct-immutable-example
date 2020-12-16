@@ -1,6 +1,6 @@
 package com.github.devkat.persistence.dto;
 
-import com.github.devkat.model.WithId;
+import com.github.devkat.domain.WithId;
 
 public interface WithIdDto<ID, A> {
 

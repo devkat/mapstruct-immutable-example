@@ -1,4 +1,4 @@
-package com.github.devkat.model;
+package com.github.devkat.domain;
 
 public enum Species {
 

@@ -2,7 +2,7 @@ package com.github.devkat.persistence.dto;
 
 import javax.persistence.*;
 
-import com.github.devkat.model.*;
+import com.github.devkat.domain.*;
 import com.github.devkat.persistence.mapping.Mappers;
 
 @Entity

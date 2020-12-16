@@ -1,4 +1,4 @@
-package com.github.devkat.model;
+package com.github.devkat.domain;
 
 import fj.data.Option;
 import org.immutables.value.Value;

@@ -2,8 +2,8 @@ package com.github.devkat.persistence.dto;
 
 import javax.persistence.*;
 
-import com.github.devkat.model.*;
-import com.github.devkat.model.Character;
+import com.github.devkat.domain.*;
+import com.github.devkat.domain.Character;
 import com.github.devkat.persistence.conversion.OptionConverter;
 import com.github.devkat.persistence.mapping.Mappers;
 import fj.data.Option;

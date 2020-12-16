@@ -1,6 +1,6 @@
 package com.github.devkat.persistence.mapping;
 
-import com.github.devkat.model.BookId;
+import com.github.devkat.domain.BookId;
 
 public class BookIdMapper {
 

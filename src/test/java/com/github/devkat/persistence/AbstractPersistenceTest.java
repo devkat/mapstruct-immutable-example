@@ -7,7 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 
-import com.github.devkat.model.WithId;
+import com.github.devkat.domain.WithId;
 import com.github.devkat.persistence.dto.WithIdDto;
 import com.github.devkat.persistence.mapping.DtoMapper;
 import fj.function.Effect0;

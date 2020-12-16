@@ -1,6 +1,6 @@
 package com.github.devkat.persistence.mapping;
 
-import com.github.devkat.model.CharacterId;
+import com.github.devkat.domain.CharacterId;
 
 public class CharacterIdMapper {
 
