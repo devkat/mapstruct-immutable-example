@@ -13,10 +13,10 @@ public class CharacterDto implements WithIdDto<CharacterId, Character> {
 
     @Override
     public WithId<CharacterId, Character> toEntity() {
-        return ImmutableWithId.<CharacterId, Character>builder()
-                .id(CharacterId.of(id))
-                .data(Mappers.CharacterMapper.instance.fromDto(this))
-                .build();
+        return ImmutableWithId.of(
+                CharacterId.of(id),
+                Mappers.CharacterMapper.instance.fromDto(this)
+        );
     }
 
     @Id

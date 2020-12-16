@@ -89,20 +89,6 @@
               <version>${org.immutables.version}</version>
             </path>
           </annotationProcessorPaths>
-          <fork>true</fork>
-          <compilerArguments>
-            <compilerArg>-Amapstruct.verbose=true</compilerArg>
-            <compilerArg>-verbose</compilerArg>
-            <compilerArg>-XprintRounds</compilerArg>
-            <compilerArg>-XprintProcessorInfo</compilerArg>
-            <compilerArg>-Xlint</compilerArg>
-            <compilerArg>-J-verbose</compilerArg>
-            <arg>-verbose</arg>
-            <arg>-XprintRounds</arg>
-            <arg>-XprintProcessorInfo</arg>
-            <arg>-Xlint</arg>
-            <arg>-J-verbose</arg>
-          </compilerArguments>
         </configuration>
       </plugin>
     </plugins>
