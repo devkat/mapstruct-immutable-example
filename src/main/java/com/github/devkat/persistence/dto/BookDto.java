@@ -10,10 +10,10 @@ public class BookDto implements WithIdDto<BookId, Book> {
 
     @Override
     public WithId<BookId, Book> toEntity() {
-        return ImmutableWithId.<BookId, Book>builder()
-                .id(BookId.of(id))
-                .data(Mappers.BookMapper.instance.fromDto(this))
-                .build();
+        return ImmutableWithId.of(
+                BookId.of(id),
+                Mappers.BookMapper.instance.fromDto(this)
+        );
     }
 
     @Id
