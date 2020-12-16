@@ -1,6 +1,6 @@
-# Immutable Domain Objects with MapStruct and Immutables
+# Safe Domain Objects with MapStruct and Immutables
 
-This is the example code for the article [Immutable Domain Objects with MapStruct and Immutables]() on dev.to.
+This is the example code for the article [Safe Domain Objects with MapStruct and Immutables]() on dev.to.
 
 ## Prerequisites
 
