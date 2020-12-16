@@ -28,9 +28,7 @@ public class PersistenceTest extends AbstractPersistenceTest {
         transactional(() -> {
 
             final WithId<BookId, Book> book = persist(Mappers.BookMapper.instance,
-                    ImmutableBook.builder()
-                            .title("Night Watch")
-                            .build());
+                    ImmutableBook.of("Night Watch"));
 
             final Effect1<Character> persistCharacter = (ch) -> {
 
@@ -43,15 +41,11 @@ public class PersistenceTest extends AbstractPersistenceTest {
 
             };
 
-            persistCharacter.f(ImmutableCharacter.builder()
-                    .name("Samuel Vimes")
-                    .species(some(HUMAN))
-                    .build());
+            final Character vimes = ImmutableCharacter.of("Samuel Vimes", some(HUMAN));
+            final Character nobby = ImmutableCharacter.copyOf(vimes).withName("Nobby Nobbs").withSpecies(none());
 
-            persistCharacter.f(ImmutableCharacter.builder()
-                    .name("Nobby Nobbs")
-                    .species(none())
-                    .build());
+            persistCharacter.f(vimes);
+            persistCharacter.f(nobby);
 
             final List<Pair<Pair<BookDto, BookToCharacterDto>, CharacterDto>> bookRead = List.iterableList(books()
                             .leftOuterJoin(
