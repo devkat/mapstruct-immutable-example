@@ -11,25 +11,19 @@ import com.github.devkat.domain.WithId;
 import com.github.devkat.persistence.dto.WithIdDto;
 import com.github.devkat.persistence.mapping.DtoMapper;
 import fj.function.Effect0;
-import org.jinq.jpa.JPAQueryLogger;
-import org.jinq.jpa.JinqJPAStreamProvider;
 
 import static javax.persistence.Persistence.createEntityManagerFactory;
 import static org.eclipse.persistence.config.PersistenceUnitProperties.TRANSACTION_TYPE;
 
 public abstract class AbstractPersistenceTest {
 
-    protected final JinqJPAStreamProvider streams;
     protected final EntityManager entityManager;
+    protected final EntityManagerFactory entityManagerFactory;
 
-    public AbstractPersistenceTest() {
+    {
         final Map<String, String> properties = new HashMap<>();
         properties.put(TRANSACTION_TYPE, PersistenceUnitTransactionType.RESOURCE_LOCAL.name());
-        final EntityManagerFactory entityManagerFactory =
-                createEntityManagerFactory("JPATest", properties);
-        streams = new JinqJPAStreamProvider(entityManagerFactory);
-        streams.setHint("queryLogger", (JPAQueryLogger) (query, positionParameters, namedParameters) ->
-                System.out.println("  " + query));
+        entityManagerFactory = createEntityManagerFactory("JPATest", properties);
         entityManager = entityManagerFactory.createEntityManager();
     }
 
